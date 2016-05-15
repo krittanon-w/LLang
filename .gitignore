@@ -26,6 +26,9 @@ build/Release
 # Dependency directory
 node_modules
 
+# Jison Dependency directory
+jison
+
 # Optional npm cache directory
 .npm
 
