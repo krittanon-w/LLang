@@ -1,30 +1,9 @@
-// llang
-var Parser = require("jison").Parser;
+var fs = require("fs");
+var jison = require("jison");
 
-var grammar = {
-    "lex": {
-        "rules": [
-            ["\\s+", "/* skip whitespace */"],
-            ["[a-f0-9]+", "return 'HEX';"]
-        ]
-    },
-
-    "bnf": {
-        "hex_strings": ["hex_strings HEX",
-            "HEX"
-        ]
-    }
-};
-
-var parser = new Parser(grammar);
-
-// generate source, ready to be written to disk
-var parserSource = parser.generate();
-
-// you can also use the parser directly from memory
-
-parser.parse("adfe34bc e82a");
-// returns true
-
-// parser.parse("adfe34bc zxg");
-// throws lexical error
+var bnf = fs.readFileSync("ll.jison", "utf8");
+var parser = new jison.Parser(bnf);
+//var llp = parser.parser;
+var input = "a*1";
+console.log(parser.parse(input));
+//module.exports = parser;
