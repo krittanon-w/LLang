@@ -1,0 +1,27 @@
+{
+  "name": "llang",
+  "version": "1.0.0",
+  "description": "my language in compiller subject",
+  "main": "ll.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ll.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/krittanon-w/LLang.git"
+  },
+  "keywords": [
+    "compiler",
+    "asembly"
+  ],
+  "author": "Krittanon Wisedchart",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/krittanon-w/LLang/issues"
+  },
+  "homepage": "https://github.com/krittanon-w/LLang#readme",
+  "dependencies": {
+    "jison": "file:jison"
+  }
+}
