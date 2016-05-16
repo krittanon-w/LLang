@@ -15,20 +15,32 @@
 %% /* language grammar */
 
 start
-    : multiplication EOF
+    : multip EOF
         {return $1;}
     ;
 
-multiplication
-    : variable '*' variable
+multip
+    : multip '*' multip
         {$$ = {
-            type: 'multiplication',
+            type: 'multip-P',
             arguments: [
               $1,
               $3
             ]
           };
         }
+    | 'NUMBER'
+        {$$ = {
+              type: 'number',
+              arguments: [$1]
+            };
+         }
+    | 'CHARACTER'
+        {$$ = {
+              type: 'character',
+              arguments: [$1]
+            };
+         }
     ;
 
 variable
