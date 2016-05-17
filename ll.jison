@@ -15,7 +15,7 @@
 %% /* language grammar */
 
 start
-    : multip EOF
+    : multip 'EOF'
         {return $1;}
     ;
 
@@ -56,4 +56,14 @@ variable
               arguments: [$1]
             };
          }
+    ;
+
+function
+    : '(' E ')'
+        { $$ = {
+                type: 'function',
+                arguments:[$2]
+              };
+        }
+    | variable
     ;
