@@ -9,6 +9,4 @@ var parser = new jison.Parser(bnf);
 var output = parser.parse(input);
 console.log(varDump(output));
 
-
 module.exports = parser;
-

@@ -85,7 +85,7 @@ statement
             ]
           };
         }
-    | 'VAR' '=' expression
+    | 'VAR' '=' statement
         {$$ = {
             type: 'assign',
             arguments: [
