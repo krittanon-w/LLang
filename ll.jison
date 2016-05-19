@@ -77,7 +77,7 @@ statement
             ]
           };
         }
-    | 'loop' '(' 'NUM' '->' 'NUM' ',' 'NUM' ')' '{' statement '}'
+    | 'loop' '(' 'NUM' '->' 'NUM' ')' '{' statement '}'
         {$$ = {
             type: 'loop-statement',
             arguments: [
