@@ -1,4 +1,3 @@
-/* lexical grammar */
 %lex
 %%
 
@@ -21,32 +20,72 @@
 "%"                   return '%'
 "("                   return '('
 ")"                   return ')'
-"PI"                  return 'PI'
 "="                   return '='
 <<EOF>>               return 'EOF'
 .                     return 'INVALID'
 
 /lex
+/* end lexical */
 
-/* operator associations and precedence */
+%{
+  //console.log('hello');
+%}
 
+%right '='
 %left '+' '-'
-%left '*' '/'
-%right '!'
-%right '%'
+%left '*' '/' '%'
 
-%start start
+%start program
 %% /* language grammar */
-
-start
-    : stagement 'EOF'
-        {return $1;}
-    | stagement ';'
-        {return $1;}
+program
+    : statementseq 'EOF'
+        {
+          return $1;
+        }
+    ;
+statementseq
+    : statementseq statement
+        {$$ = {
+            type: 'statementseq',
+            arguments: [
+              $1,
+              $2
+            ]
+          };
+        }
+    | statement
+        {
+          $$ = $1;
+        }
     ;
 
-stagement
-    : 'VAR' '=' expression
+statement
+    : 'print' factor
+        {$$ = {
+            type: 'print',
+            arguments: [
+              $2
+            ]
+          };
+        }
+    | 'if' '(' expression ')' '{' statement '}'
+        {$$ = {
+            type: 'if-statement',
+            arguments: [
+              $3,
+              $6
+            ]
+          };
+        }
+    | 'loop' '(' 'NUM' '->' 'NUM' ',' 'NUM' ')' '{' statement '}'
+        {$$ = {
+            type: 'loop-statement',
+            arguments: [
+              $statement
+            ]
+          };
+        }
+    | 'VAR' '=' expression
         {$$ = {
             type: 'assign',
             arguments: [
@@ -55,37 +94,13 @@ stagement
             ]
           };
         }
-    | 'print' factor ';'
-        {$$ = {
-            type: 'print',
-            arguments: [
-              $2
-            ]
-          };
-        }
-    | 'if' '(' expression ')' '{' stagement '}'
-        {$$ = {
-            type: 'if-stagement',
-            arguments: [
-              $3,
-              $6
-            ]
-          };
-        }
-    | 'loop' '(' 'NUM' '->' 'NUM' ',' 'NUM' ')' '{' stagement '}'
-        {$$ = {
-            type: 'loop-stagement',
-            arguments: [
-              $stagement
-            ]
-          };
-        }
-    | expression
+    | expression ';'
+        {$$ = $1;}
     ;
 
 expression
     : expression '+' term
-        {$$ = {
+        { $$ = {
             type: 'add',
             arguments: [
               $1,
@@ -94,8 +109,8 @@ expression
           };
         }
     | expression '-' term
-        {$$ = {
-            type: 'MIN',
+        { $$ = {
+            type: 'minus',
             arguments: [
               $1,
               $3
@@ -109,7 +124,7 @@ term
     : term '*' factor
         { $$ = {
             type: 'multi',
-            argements: [
+            arguments: [
               $1,
               $3
             ]
@@ -117,8 +132,8 @@ term
         }
     | term '/' factor
         { $$ = {
-            type: 'divi',
-            argements: [
+            type: 'divide',
+            arguments: [
               $1,
               $3
             ]
@@ -127,7 +142,7 @@ term
     | term '%' factor
         { $$ = {
             type: 'mod',
-            argements: [
+            arguments: [
               $1,
               $3
             ]
@@ -154,5 +169,6 @@ factor
           };
         }
     | '(' expression ')'
-        {return $2;}
+        { $$ = $2}
     ;
+%%
