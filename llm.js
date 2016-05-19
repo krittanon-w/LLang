@@ -1,7 +1,7 @@
 var fs = require("fs");
 var jison = require("jison");
-var varDump = require("./varDump.js");
-var postOrder = require("./ast.js").postOrder;
+var varDump = require("./jpnt.js");
+var poOr = require("./ast.js").postOrder;
 
 
 var bnf = fs.readFileSync("ll.jison", "utf8");
