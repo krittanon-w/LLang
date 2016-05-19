@@ -101,11 +101,10 @@ statement
 expression
     : expression '+' term
         { $$ = {
-            type: 'add',
-            arguments: [
-              $1,
-              $3
-            ]
+            type:'multi',
+            value: '+',
+            left:$1,
+            right:$3
           };
         }
     | expression '-' term
@@ -154,18 +153,18 @@ term
 factor
     : 'NUM'
         { $$ = {
-            type: 'number',
-            arguments: [
-              $1
-            ]
+            type:'number',
+            value: parseInt($1),
+            left:null,
+            right:null
           };
         }
     | 'VAR'
         { $$ = {
-            type: 'variable',
-            arguments: [
-              $1
-            ]
+            type:'variable',
+            value: $1,
+            left:null,
+            right:null
           };
         }
     | '(' expression ')'
