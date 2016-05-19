@@ -155,7 +155,7 @@ factor
     : 'NUM'
         { $$ = {
             type: 'number',
-            argements: [
+            arguments: [
               $1
             ]
           };
