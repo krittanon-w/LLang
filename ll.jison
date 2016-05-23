@@ -1,3 +1,7 @@
+%{
+  var say = 'hello';
+%}
+
 %lex
 %%
 
@@ -21,6 +25,7 @@
 "("                   return '('
 ")"                   return ')'
 "="                   return '='
+"\n"                  return ''
 <<EOF>>               return 'EOF'
 .                     return 'INVALID'
 
@@ -38,20 +43,15 @@
 %start program
 %% /* language grammar */
 program
-    : statementseq 'EOF'
+    : statementseq
         {
           return $1;
         }
     ;
 statementseq
     : statementseq statement
-        {$$ = {
-            type: 'statementseq',
-            arguments: [
-              $1,
-              $2
-            ]
-          };
+        {
+          $$ = node('stmtseq',null,$1,$statement);
         }
     | statement
         {
@@ -59,40 +59,27 @@ statementseq
         }
     ;
 
+opt_newlines
+    : %empty
+    | opt_newlines 'EOF'
+    ;
+
+newlines
+    : '\n'
+    ;
+
 statement
     : 'print' factor
-        {$$ = {
-            type: 'print',
-            arguments: [
-              $2
-            ]
-          };
+        {
+          $$ = node('print',$2,null,null);
         }
     | 'if' '(' expression ')' '{' statement '}'
-        {$$ = {
-            type: 'if-statement',
-            arguments: [
-              $3,
-              $6
-            ]
-          };
+        {
+          $$ = node('loop','if',$3,$6);
         }
     | 'loop' '(' 'NUM' '->' 'NUM' ')' '{' statement '}'
-        {$$ = {
-            type: 'loop-statement',
-            arguments: [
-              $statement
-            ]
-          };
-        }
-    | 'VAR' '=' statement
-        {$$ = {
-            type: 'assign',
-            arguments: [
-              $1,
-              $3
-            ]
-          };
+        {
+          $$ = node('loop',[$3,$6],null,$6);
         }
     | expression ';'
         {$$ = $1;}
@@ -100,74 +87,59 @@ statement
 
 expression
     : expression '+' term
-        { $$ = {
-            type:'multi',
-            value: '+',
-            left:$1,
-            right:$3
-          };
+        {
+          $$ = node('add','+',$1,$3);
         }
     | expression '-' term
-        { $$ = {
-            type: 'minus',
-            arguments: [
-              $1,
-              $3
-            ]
-          };
+        {
+          $$ = node('minus','+',$1,$3);
+        }
+    | 'VAR' '=' expression
+        {
+          $$ = node('assign','=',$1,$3);
         }
     | term
     ;
 
 term
     : term '*' factor
-        { $$ = {
-            type: 'multi',
-            arguments: [
-              $1,
-              $3
-            ]
-          };
+        {
+          $$ = node('miuti','*',$1,$3);
         }
     | term '/' factor
-        { $$ = {
-            type: 'divide',
-            arguments: [
-              $1,
-              $3
-            ]
-          };
+        {
+          $$ = node('divide','/',$1,$3);
         }
     | term '%' factor
-        { $$ = {
-            type: 'mod',
-            arguments: [
-              $1,
-              $3
-            ]
-          };
+        {
+          $$ = node('mod','%',$1,$3);
         }
     | factor
     ;
 
 factor
     : 'NUM'
-        { $$ = {
-            type:'number',
-            value: parseInt($1),
-            left:null,
-            right:null
-          };
+        {
+          $$ = node('number',$1,null,null);
         }
     | 'VAR'
-        { $$ = {
-            type:'variable',
-            value: $1,
-            left:null,
-            right:null
-          };
+        {
+          $$ = node('variable',$1,null,null);
         }
     | '(' expression ')'
         { $$ = $2}
     ;
 %%
+
+function node(type,value,left_node,right_node){
+  return {
+    type:type,
+    value: value,
+    left:left_node,
+    right:right_node
+  }
+}
+
+parser.test = function(){
+  return 'hello jison';
+}
